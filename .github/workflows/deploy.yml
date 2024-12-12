@@ -1,0 +1,59 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main  # Déclencher le workflow sur les pushs vers la branche principale.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Étape 1 : Récupération du code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Étape 2 : Authentification à Google Cloud
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: Configure gcloud
+      run: |
+        gcloud config set project ${{ secrets.GCP_PROJECT }}
+        gcloud config set compute/zone ${{ secrets.GCP_ZONE }}
+
+    # Étape 3 : Configurer kubectl pour interagir avec le cluster
+    - name: Get Kubernetes credentials
+      run: |
+        gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }}
+
+    # Étape 4 : Installation de Helm
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
+
+    # Étape 5 : Déployer les composants avec Helm
+    - name: Deploy Airflow
+      run: |
+        helm repo add apache-airflow https://airflow.apache.org
+        helm upgrade --install airflow apache-airflow/airflow -f k8s/airflow-values.yaml
+
+    - name: Deploy Kafka
+      run: |
+        helm repo add bitnami https://charts.bitnami.com/bitnami
+        helm upgrade --install kafka bitnami/kafka -f k8s/kafka-values.yaml
+
+    # Étape 6 : Appliquer vos fichiers Kubernetes personnalisés
+    - name: Apply custom Kubernetes configurations
+      run: |
+        kubectl apply -f k8s/post_pusher-deployment.yaml
+        kubectl apply -f k8s/post_consumer-deployment.yaml
+        kubectl apply -f k8s/kafka-ui.yaml
+
+    # Étape 7 : Vérification du déploiement
+    - name: Verify deployments
+      run: |
+        kubectl get pods
+        kubectl get services
