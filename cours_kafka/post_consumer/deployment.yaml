@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-consumer-kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: post-consumer-kafka
+  template:
+    metadata:
+      labels:
+        app: post-consumer-kafka
+    spec:
+      containers:
+      - name: post-consumer-kafka
+        image: 2024_kubernetes_post_consumer
+        imagePullPolicy: Never
+        command: ["python", "main.py", "--multiple", "--kafka_host=kafka-broker-service:9092"]
