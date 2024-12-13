@@ -20,7 +20,7 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
+          ssh -t -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
             set -e
             cd ${{ secrets.APP_PATH }}
             git checkout main
@@ -53,7 +53,7 @@ jobs:
           EOF
       - name: Verify Deployments
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
+          ssh -t -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
             kubectl get pods -n projet
             kubectl get services -n projet
           EOF
