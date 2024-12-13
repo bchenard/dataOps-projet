@@ -27,4 +27,6 @@ kubectl apply -f airflow/airflow-dags-pv.yaml -n projet
 kubectl apply -f airflow/airflow-dags-pvc.yaml -n projet
 
 helm install airflow airflow-stable/airflow --version 8.9.0 --values ./airflow/custom-values.yaml --namespace projet
+
+kubectl port-forward svc/airflow-web 8080:8080 --namespace projet
 ```
