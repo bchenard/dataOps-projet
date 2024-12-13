@@ -12,5 +12,6 @@ with DAG(dag_id="post_pusher", start_date=datetime(2022, 1, 1), schedule="* * * 
         namespace='projet',
         image='2024_kubernetes_post_pusher',
         image_pull_policy='Never',
-        is_delete_operator_pod=True
+        is_delete_operator_pod=True,
+        is_paused_upon_creation=False
     )
