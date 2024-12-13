@@ -52,6 +52,10 @@ jobs:
             kubectl apply -f airflow/airflow-dags-pvc.yaml -n projet
             
             helm install airflow airflow-stable/airflow --version 8.9.0 --values ./airflow/custom-values.yaml --namespace projet
+
+            kubectl wait --for=condition=ready pod --all --namespace projet --timeout=600s
+            
+            nohup kubectl port-forward svc/airflow-web 8080:8080 --namespace projet &
           EOF
       - name: Verify Deployments
         run: |
