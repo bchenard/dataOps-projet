@@ -55,7 +55,8 @@ jobs:
 
             kubectl wait --for=condition=ready pod --all --namespace projet --timeout=600s
             
-            nohup kubectl port-forward svc/airflow-web 8080:8080 --namespace projet &
+            nohup kubectl port-forward svc/airflow-web 8080:8080 --namespace projet > /dev/null 2>&1 &
+            disown
           EOF
       - name: Verify Deployments
         run: |
