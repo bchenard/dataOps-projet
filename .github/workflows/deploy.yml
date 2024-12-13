@@ -23,7 +23,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
             set -e
             cd ${{ secrets.APP_PATH }}
-            git checkout master
+            git checkout main
             git pull
 
             kind delete clusters --all
