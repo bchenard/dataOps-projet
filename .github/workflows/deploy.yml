@@ -23,7 +23,7 @@ jobs:
           ssh -t -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
             set -e
             cd ${{ secrets.APP_PATH }}
-            source ~/.bashrc
+            export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
             echo $PATH
             git checkout main
             git pull
