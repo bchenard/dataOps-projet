@@ -25,7 +25,7 @@ jobs:
             cd ${{ secrets.APP_PATH }}
             git checkout master
             git pull
-            
+
             kind delete clusters --all
 
             kind create cluster --config ./kind/config.yaml -n projet
@@ -50,4 +50,10 @@ jobs:
             kubectl apply -f airflow/airflow-dags-pvc.yaml -n projet
             
             helm install airflow airflow-stable/airflow --version 8.9.0 --values ./airflow/custom-values.yaml --namespace projet
+          EOF
+      - name: Verify Deployments
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
+            kubectl get pods -n projet
+            kubectl get services -n projet
           EOF
